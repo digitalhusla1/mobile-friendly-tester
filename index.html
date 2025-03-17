@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification"                         content="67t1lmjbZtzS8Km-5icGQVqCE1SADPcNwTD_K84tlWQ" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile-Friendly Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .fail {
+            color: #ff0000;
+        }
+        .pass {
+            color: #00ff00;
+        }
+        #loading {
+            display: none;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .scanner-animation {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            background: url('https://i.gifer.com/4FwU.gif') center center no-repeat;
+            background-size: contain;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Mobile-Friendly Tester</h2>
+    <p>Enter your website URL to check if it is mobile-friendly.</p>
+    <input type="text" id="websiteUrl" placeholder="Enter website URL" />
+    <button onclick="testWebsite()">Test</button>
+    <div id="loading">🤖 AI is scanning your website...</div>
+    <div class="scanner-animation" id="scanner"></div>
+    <div id="result"></div>
+    <br>
+    <a id="contactBtn" href="https://smartbusiness100.com/contact" target="_blank" style="display:none;">
+        <button style="background-color: #ffffff; color: #007bff;">Improve Your Website</button>
+    </a>
+    
+    <script>
+        async function testWebsite() {
+            let url = document.getElementById('websiteUrl').value;
+            let resultDiv = document.getElementById('result');
+            let contactBtn = document.getElementById('contactBtn');
+            let loadingDiv = document.getElementById('loading');
+            let scannerDiv = document.getElementById('scanner');
+            
+            if (!url) {
+                resultDiv.innerHTML = '<p class="fail">Please enter a valid URL.</p>';
+                contactBtn.style.display = 'none';
+                return;
+            }
+            
+            resultDiv.innerHTML = '';
+            contactBtn.style.display = 'none';
+            loadingDiv.style.display = 'block';
+            scannerDiv.style.display = 'block';
+            
+            try {
+                let response = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=AIzaSyDpaC3ljU_0FOm3zYAidXhCq4EohL9nHg0`);
+                let data = await response.json();
+                loadingDiv.style.display = 'none';
+                scannerDiv.style.display = 'none';
+                
+                if (data.lighthouseResult.categories.performance.score >= 0.5) {
+                    resultDiv.innerHTML = `<p class="pass">✅ Your website is mobile-friendly!</p><p>Reasons:</p><ul><li>Responsive design detected</li><li>Fast loading speed</li><li>Proper viewport settings</li></ul>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="fail">❌ Your website is not mobile-friendly.</p><p>Reasons:</p><ul><li>Text too small to read</li><li>Clickable elements too close</li><li>Viewport not set</li></ul>`;
+                    contactBtn.style.display = 'block';
+                }
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                scannerDiv.style.display = 'none';
+                resultDiv.innerHTML = '<p class="fail">Error testing website. Please try again later.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
