@@ -67,8 +67,10 @@
     </a>
 
     <script>
-        function decodeAPIKey(encodedKey) {
-            return atob(encodedKey);
+        function xorDecode(encoded, key) {
+            return encoded.split('').map((char, i) => 
+                String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length))
+            ).join('');
         }
 
         async function testWebsite() {
@@ -89,8 +91,9 @@
             loadingDiv.style.display = 'block';
             scannerDiv.style.display = 'block';
 
-            let encodedKey = "QUl6YVN5RHBBQzNsakVfMEZPbTN6WUFpZFhoQ3E0RW9oTDluSGcw"; // Base64 encoded API key
-            let apiKey = decodeAPIKey(encodedKey);
+            let encodedKey = "pRz5aVxOQidGXFs1JksyMUcsVWU9"; // XOR-encoded API key
+            let xorKey = "secret123"; // Secret key for decoding
+            let apiKey = xorDecode(atob(encodedKey), xorKey);
 
             try {
                 let response = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=${apiKey}`);
