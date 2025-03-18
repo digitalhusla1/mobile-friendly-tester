@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification"                         content="67t1lmjbZtzS8Km-5icGQVqCE1SADPcNwTD_K84tlWQ" />
+    <meta name="google-site-verification" content="67t1lmjbZtzS8Km-5icGQVqCE1SADPcNwTD_K84tlWQ" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile-Friendly Tester</title>
@@ -65,32 +65,39 @@
     <a id="contactBtn" href="https://smartbusiness100.com/contact" target="_blank" style="display:none;">
         <button style="background-color: #ffffff; color: #007bff;">Improve Your Website</button>
     </a>
-    
+
     <script>
+        function decodeAPIKey(encodedKey) {
+            return atob(encodedKey);
+        }
+
         async function testWebsite() {
             let url = document.getElementById('websiteUrl').value;
             let resultDiv = document.getElementById('result');
             let contactBtn = document.getElementById('contactBtn');
             let loadingDiv = document.getElementById('loading');
             let scannerDiv = document.getElementById('scanner');
-            
+
             if (!url) {
                 resultDiv.innerHTML = '<p class="fail">Please enter a valid URL.</p>';
                 contactBtn.style.display = 'none';
                 return;
             }
-            
+
             resultDiv.innerHTML = '';
             contactBtn.style.display = 'none';
             loadingDiv.style.display = 'block';
             scannerDiv.style.display = 'block';
-            
+
+            let encodedKey = "QUl6YVN5RHBBQzNsakVfMEZPbTN6WUFpZFhoQ3E0RW9oTDluSGcw"; // Base64 encoded API key
+            let apiKey = decodeAPIKey(encodedKey);
+
             try {
-                let response = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=AIzaSyDpaC3ljU_0FOm3zYAidXhCq4EohL9nHg0`);
+                let response = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=${apiKey}`);
                 let data = await response.json();
                 loadingDiv.style.display = 'none';
                 scannerDiv.style.display = 'none';
-                
+
                 if (data.lighthouseResult.categories.performance.score >= 0.5) {
                     resultDiv.innerHTML = `<p class="pass">✅ Your website is mobile-friendly!</p><p>Reasons:</p><ul><li>Responsive design detected</li><li>Fast loading speed</li><li>Proper viewport settings</li></ul>`;
                 } else {
